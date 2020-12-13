@@ -47,7 +47,11 @@ function AddSong() {
       >
         <DialogTitle>Edit Song</DialogTitle>
         <DialogContent>
-          <img alt="Song Thumbnail" className={classes.thumbnail} />
+          <img
+            src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOVP.aX9zboZiDRoGhd7r-cNNUwEsCG%26pid%3DApi&f=1"
+            alt="Song Thumbnail"
+            className={classes.thumbnail}
+          />
           <TextField margin="dense" name="title" label="Title" fullWidth />
           <TextField margin="dense" name="artist" label="Artist" fullWidth />
           <TextField
