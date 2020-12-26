@@ -10,16 +10,12 @@ import {
 } from "@material-ui/core";
 import { PlayArrow, Save } from "@material-ui/icons";
 import React from "react";
+// import { useQuery } from "@apollo/react-hooks";
+import { GET_SONGS } from "../graphql/subscriptions";
+import { useSubscription } from "@apollo/react-hooks";
 
 function SongList() {
-  let loading = false;
-
-  const song = {
-    title: "What I've Done",
-    artist: "Linkin Park",
-    thumbnail:
-      "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOVP.aX9zboZiDRoGhd7r-cNNUwEsCG%26pid%3DApi&f=1",
-  };
+  const { data, loading, error } = useSubscription(GET_SONGS);
 
   if (loading) {
     return (
@@ -36,10 +32,14 @@ function SongList() {
     );
   }
 
+  if (error) {
+    return <div>Error fetching songs</div>;
+  }
+
   return (
     <div>
-      {Array.from({ length: 10 }, () => song).map((song, i) => (
-        <Song key={i} song={song} />
+      {data.songs.map((song) => (
+        <Song key={song.id} song={song} />
       ))}
     </div>
   );
