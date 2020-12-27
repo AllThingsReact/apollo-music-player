@@ -8,11 +8,12 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import { PlayArrow, Save } from "@material-ui/icons";
-import React from "react";
-// import { useQuery } from "@apollo/react-hooks";
+import { Pause, PlayArrow, Save } from "@material-ui/icons";
+import React, { useContext } from "react";
 import { GET_SONGS } from "../graphql/subscriptions";
-import { useSubscription } from "@apollo/react-hooks";
+import { useSubscription, useMutation } from "@apollo/react-hooks";
+import { songContext } from "../App";
+import { ADD_OR_REMOVE_FROM_QUEUE } from "../graphql/mutations";
 
 function SongList() {
   const { data, loading, error } = useSubscription(GET_SONGS);
@@ -67,8 +68,32 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Song({ song }) {
+  const { state, dispatch } = useContext(songContext);
+  const [addOrRemoveFromQueue] = useMutation(ADD_OR_REMOVE_FROM_QUEUE, {
+    onCompleted: (data) => {
+      localStorage.setItem("queue", JSON.stringify(data.addOrRemoveFromQueue));
+    },
+  });
   const classes = useStyles();
-  const { title, artist, thumbnail } = song;
+  const { title, artist, thumbnail, id } = song;
+
+  const handleSongPlayPause = () => {
+    if (id === state.song.id) {
+      state.isPlaying
+        ? dispatch({ type: "PAUSE_SONG" })
+        : dispatch({ type: "PLAY_SONG" });
+    } else {
+      dispatch({ type: "CHANGE_SONG", payload: { song } });
+    }
+  };
+
+  const handleAddOrRemoveFromQueue = () => {
+    addOrRemoveFromQueue({
+      variables: {
+        input: { ...song, __typename: "Song" },
+      },
+    });
+  };
 
   return (
     <Card className={classes.root}>
@@ -84,10 +109,22 @@ function Song({ song }) {
             </Typography>
           </CardContent>
           <CardActions>
-            <IconButton size="small" color="primary">
-              <PlayArrow />
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={handleSongPlayPause}
+            >
+              {state.isPlaying && id === state.song.id ? (
+                <Pause />
+              ) : (
+                <PlayArrow />
+              )}
             </IconButton>
-            <IconButton size="small" color="secondary">
+            <IconButton
+              size="small"
+              color="secondary"
+              onClick={handleAddOrRemoveFromQueue}
+            >
               <Save />
             </IconButton>
           </CardActions>

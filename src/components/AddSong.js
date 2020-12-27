@@ -79,7 +79,6 @@ function AddSong() {
   const handleAddSong = async () => {
     try {
       const { url, thumbnail, duration, title, artist } = song;
-      // addSong({ variables: { ...song } });
       await addSong({
         variables: {
           url: url.length > 0 ? url : null,
@@ -104,7 +103,7 @@ function AddSong() {
   const getYoutubeInfo = (player) => {
     const duration = player.getDuration();
     const { title, video_id, author } = player.getVideoData();
-    const thumbnail = `http://img.youtube.com/vi/${video_id}/0.jpeg`;
+    const thumbnail = `http://img.youtube.com/vi/${video_id}/0.jpg`;
 
     return {
       duration,
@@ -193,7 +192,7 @@ function AddSong() {
       </Dialog>
       <TextField
         className={classes.urlInput}
-        placeholder="Add url"
+        placeholder="Add Youtube or Soundcloud Url"
         fullWidth
         margin="normal"
         type="url"
